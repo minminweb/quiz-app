@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>陰キャ or 陽キャ 診断クイズ</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f0f0f0;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    .quiz-box {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+    }
+    button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .result {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="quiz-box">
+    <h1>陰キャ or 陽キャ 診断</h1>
+    <div id="quiz">
+      <p id="question">質問を読み込み中...</p>
+      <button onclick="answer(0)" id="btn0">選択肢A</button>
+      <button onclick="answer(1)" id="btn1">選択肢B</button>
+    </div>
+    <div id="result" class="hidden result"></div>
+  </div>
+
+  <script>
+    const quizData = [
+      { q: "休日、家で過ごすのが好き？", choices: ["はい（陰）", "いいえ（陽）"], score: [1, 0] },
+      { q: "初対面でも話しかけるタイプ？", choices: ["いいえ（陰）", "はい（陽）"], score: [1, 0] },
+      { q: "カラオケは好き？", choices: ["苦手（陰）", "大好き（陽）"], score: [1, 0] },
+      { q: "SNSの投稿頻度は？", choices: ["ほぼ投稿しない（陰）", "しょっちゅう投稿（陽）"], score: [1, 0] },
+      { q: "飲み会のテンションは？", choices: ["静かに飲みたい（陰）", "ワイワイ盛り上がる（陽）"], score: [1, 0] },
+      { q: "友達の数は？", choices: ["少数精鋭（陰）", "めっちゃ多い（陽）"], score: [1, 0] },
+      { q: "旅行は？", choices: ["一人旅が好き（陰）", "グループ旅行派（陽）"], score: [1, 0] },
+      { q: "体育祭、好き？", choices: ["苦手（陰）", "楽しみ！（陽）"], score: [1, 0] },
+      { q: "ライブやフェスは？", choices: ["行かない（陰）", "行く行く！（陽）"], score: [1, 0] },
+      { q: "あなたの本音は？", choices: ["目立ちたくない（陰）", "注目されたい（陽）"], score: [1, 0] }
+    ];
+
+    let current = 0;
+    let totalScore = 0;
+
+    const questionEl = document.getElementById("question");
+    const btn0 = document.getElementById("btn0");
+    const btn1 = document.getElementById("btn1");
+    const quizBox = document.getElementById("quiz");
+    const resultBox = document.getElementById("result");
+
+    function loadQuestion() {
+      const q = quizData[current];
+      questionEl.textContent = `${current + 1}. ${q.q}`;
+      btn0.textContent = q.choices[0];
+      btn1.textContent = q.choices[1];
+    }
+
+    function answer(choice) {
+      totalScore += quizData[current].score[choice];
+      current++;
+      if (current < quizData.length) {
+        loadQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+      quizBox.classList.add("hidden");
+      let resultText = "";
+      if (totalScore >= 7) {
+        resultText = "あなたは陰キャ寄りかも！内に秘めた魅力あり💫";
+      } else if (totalScore >= 4) {
+        resultText = "バランスタイプ！陰と陽のハイブリッド🌗";
+      } else {
+        resultText = "あなたは陽キャ寄り！エネルギッシュで明るい☀️";
+      }
+      resultBox.textContent = resultText;
+      resultBox.classList.remove("hidden");
+    }
+
+    loadQuestion();
+  </script>
+</body>
+</html>
