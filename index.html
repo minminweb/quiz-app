@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>陰キャ or 陽キャ 診断クイズ</title>
   <style>
     body {
@@ -27,12 +27,25 @@
       border: none;
       border-radius: 8px;
       cursor: pointer;
+      white-space: nowrap;
     }
+    .hidden { display: none; }
     .result {
       font-size: 20px;
       font-weight: bold;
+      margin-top: 20px;
     }
-    .hidden { display: none; }
+    .explanation {
+      font-size: 14px;
+      color: #666;
+      margin-top: 8px;
+      margin-bottom: 20px;
+    }
+    /* 「（陰）」「（陽）」を非表示に */
+    .hidden-label {
+      visibility: hidden;
+      /* 文字の幅も消したい場合はdisplay:noneでもOK */
+    }
   </style>
 </head>
 <body>
@@ -40,30 +53,42 @@
     <h1>陰キャ or 陽キャ 診断</h1>
     <div id="quiz">
       <p id="question">質問を読み込み中...</p>
-      <button onclick="answer(0)" id="btn0">選択肢A</button>
-      <button onclick="answer(1)" id="btn1">選択肢B</button>
+      <div class="explanation" id="explanation"></div>
+      <button onclick="answer(0)" id="btn0"><span class="choice-text"></span> <span class="hidden-label">（陰）</span></button>
+      <button onclick="answer(1)" id="btn1"><span class="choice-text"></span> <span class="hidden-label">（陽）</span></button>
     </div>
     <div id="result" class="hidden result"></div>
   </div>
 
   <script>
     const quizData = [
-      { q: "休日、家で過ごすのが好き？", choices: ["はい（陰）", "いいえ（陽）"], score: [1, 0] },
-      { q: "初対面でも話しかけるタイプ？", choices: ["いいえ（陰）", "はい（陽）"], score: [1, 0] },
-      { q: "カラオケは好き？", choices: ["苦手（陰）", "大好き（陽）"], score: [1, 0] },
-      { q: "SNSの投稿頻度は？", choices: ["ほぼ投稿しない（陰）", "しょっちゅう投稿（陽）"], score: [1, 0] },
-      { q: "飲み会のテンションは？", choices: ["静かに飲みたい（陰）", "ワイワイ盛り上がる（陽）"], score: [1, 0] },
-      { q: "友達の数は？", choices: ["少数精鋭（陰）", "めっちゃ多い（陽）"], score: [1, 0] },
-      { q: "旅行は？", choices: ["一人旅が好き（陰）", "グループ旅行派（陽）"], score: [1, 0] },
-      { q: "体育祭、好き？", choices: ["苦手（陰）", "楽しみ！（陽）"], score: [1, 0] },
-      { q: "ライブやフェスは？", choices: ["行かない（陰）", "行く行く！（陽）"], score: [1, 0] },
-      { q: "あなたの本音は？", choices: ["目立ちたくない（陰）", "注目されたい（陽）"], score: [1, 0] }
+      { q: "休日、家で過ごすのが好き？", choices: ["はい", "いいえ"], score: [1, 0],
+        explanation: "陰キャは家でゆっくり過ごすのが好きな傾向があります。" },
+      { q: "初対面でも話しかけるタイプ？", choices: ["いいえ", "はい"], score: [1, 0],
+        explanation: "陽キャは初対面でもフレンドリーに話しかけることが多いです。" },
+      { q: "カラオケは好き？", choices: ["苦手", "大好き"], score: [1, 0],
+        explanation: "カラオケが好きな人は陽キャの特徴かも。" },
+      { q: "SNSの投稿頻度は？", choices: ["ほぼ投稿しない", "しょっちゅう投稿"], score: [1, 0],
+        explanation: "SNSの頻度は性格の傾向を表すことがあります。" },
+      { q: "飲み会のテンションは？", choices: ["静かに飲みたい", "ワイワイ盛り上がる"], score: [1, 0],
+        explanation: "陽キャは飲み会で盛り上がるのが好きな傾向があります。" },
+      { q: "友達の数は？", choices: ["少数精鋭", "めっちゃ多い"], score: [1, 0],
+        explanation: "友達の数は性格の違いを示します。" },
+      { q: "旅行は？", choices: ["一人旅が好き", "グループ旅行派"], score: [1, 0],
+        explanation: "一人旅を好むのは陰キャの可能性大。" },
+      { q: "体育祭、好き？", choices: ["苦手", "楽しみ！"], score: [1, 0],
+        explanation: "体育祭の好みも性格の表れです。" },
+      { q: "ライブやフェスは？", choices: ["行かない", "行く行く！"], score: [1, 0],
+        explanation: "ライブ好きは陽キャの傾向が。" },
+      { q: "あなたの本音は？", choices: ["目立ちたくない", "注目されたい"], score: [1, 0],
+        explanation: "注目されたいかどうかは大きな差です。" }
     ];
 
     let current = 0;
     let totalScore = 0;
 
     const questionEl = document.getElementById("question");
+    const explanationEl = document.getElementById("explanation");
     const btn0 = document.getElementById("btn0");
     const btn1 = document.getElementById("btn1");
     const quizBox = document.getElementById("quiz");
@@ -72,8 +97,11 @@
     function loadQuestion() {
       const q = quizData[current];
       questionEl.textContent = `${current + 1}. ${q.q}`;
-      btn0.textContent = q.choices[0];
-      btn1.textContent = q.choices[1];
+      explanationEl.textContent = q.explanation;
+
+      // 選択肢のテキストだけセット（（陰）（陽）はspanで非表示）
+      btn0.querySelector(".choice-text").textContent = q.choices[0];
+      btn1.querySelector(".choice-text").textContent = q.choices[1];
     }
 
     function answer(choice) {
@@ -89,14 +117,27 @@
     function showResult() {
       quizBox.classList.add("hidden");
       let resultText = "";
-      if (totalScore >= 7) {
-        resultText = "あなたは陰キャ寄りかも！内に秘めた魅力あり💫";
-      } else if (totalScore >= 4) {
-        resultText = "バランスタイプ！！陰と陽のハイブリッド🌗";
+      let adviceText = "";
+
+      // スコアは0～10なので5段階に分割
+      if (totalScore <= 2) {
+        resultText = "漆黒の闇陰キャ";
+        adviceText = "あなたはかなりの陰キャタイプ。自分のペースで無理せずいこう！";
+      } else if (totalScore <= 4) {
+        resultText = "大陰キャ";
+        adviceText = "落ち着いた陰キャ。じっくり考える力が強いよ。";
+      } else if (totalScore <= 6) {
+        resultText = "小陰キャ";
+        adviceText = "陰陽のバランスが取れたタイプ。柔軟に対応できるのが強み。";
+      } else if (totalScore <= 8) {
+        resultText = "小陽キャ";
+        adviceText = "明るさと落ち着きを併せ持つタイプ。周囲を和ませるムードメーカー。";
       } else {
-        resultText = "あなたは陽キャ寄り！エネルギッシュで明るい☀️";
+        resultText = "大陽キャ";
+        adviceText = "元気いっぱいの陽キャ！エネルギッシュに毎日を楽しもう！";
       }
-      resultBox.textContent = resultText;
+
+      resultBox.innerHTML = `<p>${resultText}</p><p>${adviceText}</p>`;
       resultBox.classList.remove("hidden");
     }
 
@@ -104,4 +145,3 @@
   </script>
 </body>
 </html>
-
